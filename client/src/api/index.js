@@ -1,26 +1,23 @@
-import axios from 'axios';
+import axios from "axios";
 
 /**
  * Pre-configured Axios instance.
- * - baseURL points to the Express API (proxied by Vite in dev)
- * - Uses httpOnly cookies for authentication (withCredentials: true)
- * - Handles 401 responses by clearing stale auth state
+ * Uses the backend URL from environment variables.
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// ── Response interceptor: handle auth errors globally ─────────────────────
+// Handle authentication errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear stale user state — the AuthContext effect will handle redirect
-      localStorage.removeItem('ct_user');
+      localStorage.removeItem("ct_user");
     }
     return Promise.reject(error);
   }
