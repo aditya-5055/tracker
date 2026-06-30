@@ -7,10 +7,10 @@ const { protect } = require('../middleware/auth');
 // ─── Cookie config ────────────────────────────────────────────────────────────
 const COOKIE_NAME    = 'cos_token';          // ConsistencyOS token
 const COOKIE_OPTIONS = {
-  httpOnly: true,                            // JS cannot read it
-  secure:   process.env.NODE_ENV === 'production', // HTTPS-only in prod
-  sameSite: 'lax',                           // CSRF protection
-  maxAge:   7 * 24 * 60 * 60 * 1000,        // 7 days in ms
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 // ─── Helper: sign JWT ─────────────────────────────────────────────────────────
