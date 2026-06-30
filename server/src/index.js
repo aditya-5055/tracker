@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express      = require('express');
-const path         = require('path');
 const cors         = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB    = require('./config/db');
@@ -41,18 +40,6 @@ app.use('/api/*', (req, res) => {
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use(errorHandler);
-
-// ─── Production Static Serving ────────────────────────────────────────────────
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the Vite build directory
-  const clientBuildPath = path.join(__dirname, '../../client/dist');
-  app.use(express.static(clientBuildPath));
-
-  // Forward all non-API requests to React Router
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-}
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
