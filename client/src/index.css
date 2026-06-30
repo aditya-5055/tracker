@@ -1,0 +1,154 @@
+/* ── Tailwind directives ───────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties (design tokens)
+   These allow a future light-mode to simply override the variables
+   without touching any component code.
+   ─────────────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --color-bg-base:      #0a0c12;
+  --color-bg-surface:   #0f1117;
+  --color-bg-card:      #1a1d27;
+  --color-bg-elevated:  #252836;
+
+  /* Accent */
+  --color-accent:       #6366f1;
+  --color-accent-hover: #818cf8;
+  --color-accent-muted: #3730a3;
+  --color-accent-teal:  #2dd4bf;
+
+  /* Status */
+  --color-completed:    #6366f1;
+  --color-remaining:    #f59e0b;
+  --color-incomplete:   #f43f5e;
+  --color-pending:      #64748b;
+
+  /* Text */
+  --color-txt-primary:  #e2e8f0;
+  --color-txt-secondary:#94a3b8;
+  --color-txt-muted:    #64748b;
+
+  /* Borders */
+  --color-border:       #1e2235;
+  --color-border-md:    #2d3348;
+}
+
+/* ── Base Resets ────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg-surface);
+  color: var(--color-txt-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar styling (webkit) ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-md);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-muted);
+}
+
+/* ── Utility layer additions ─────────────────────────────────────────── */
+@layer utilities {
+  .glass {
+    background: rgba(37, 40, 54, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(45, 51, 72, 0.6);
+  }
+
+  .text-gradient-indigo {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-teal {
+    background: linear-gradient(135deg, #0d9488, #2dd4bf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+  }
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.30);
+  }
+}
+
+/* ── Component layer ─────────────────────────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply bg-accent text-white font-semibold px-5 py-2.5 rounded-xl
+           hover:bg-accent-hover active:scale-95
+           transition-all duration-200 shadow-glow-indigo;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent border border-border-default text-txt-secondary
+           font-medium px-5 py-2.5 rounded-xl
+           hover:border-accent hover:text-accent
+           transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-bg-card border border-border-subtle rounded-xl2 p-5 shadow-card;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold
+           px-2.5 py-1 rounded-full;
+  }
+
+  .input-field {
+    @apply w-full bg-bg-elevated border border-border-default text-txt-primary
+           placeholder-txt-muted rounded-xl px-4 py-3
+           focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent
+           transition-colors duration-200;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-txt-secondary
+           font-medium transition-all duration-200 cursor-pointer
+           hover:bg-bg-elevated hover:text-txt-primary;
+  }
+
+  .sidebar-link.active {
+    @apply bg-accent/10 text-accent border border-accent/20;
+  }
+}
