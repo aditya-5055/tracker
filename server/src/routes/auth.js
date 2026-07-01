@@ -34,6 +34,12 @@ const sendCookieResponse = (res, statusCode, user) => {
         email:        user.email,
         personalGoal: user.personalGoal,
         createdAt:    user.createdAt,
+        aiConfig: {
+          defaultModel: user.aiConfig?.defaultModel || process.env.DEFAULT_AI_MODEL || 'claude',
+          hasAnthropic: !!user.aiConfig?.anthropicKey || !!process.env.ANTHROPIC_API_KEY,
+          hasOpenAi: !!user.aiConfig?.openAiKey || !!process.env.OPENAI_API_KEY,
+          hasGemini: !!user.aiConfig?.geminiKey || !!process.env.GEMINI_API_KEY,
+        }
       },
     });
 };
@@ -129,6 +135,12 @@ router.get('/me', protect, (req, res) => {
       email:        req.user.email,
       personalGoal: req.user.personalGoal,
       createdAt:    req.user.createdAt,
+      aiConfig: {
+        defaultModel: req.user.aiConfig?.defaultModel || process.env.DEFAULT_AI_MODEL || 'claude',
+        hasAnthropic: !!req.user.aiConfig?.anthropicKey || !!process.env.ANTHROPIC_API_KEY,
+        hasOpenAi: !!req.user.aiConfig?.openAiKey || !!process.env.OPENAI_API_KEY,
+        hasGemini: !!req.user.aiConfig?.geminiKey || !!process.env.GEMINI_API_KEY,
+      }
     },
   });
 });
@@ -155,7 +167,56 @@ router.patch('/me', protect, async (req, res, next) => {
         email:        req.user.email,
         personalGoal: req.user.personalGoal,
         createdAt:    req.user.createdAt,
+        aiConfig: {
+          defaultModel: req.user.aiConfig?.defaultModel || process.env.DEFAULT_AI_MODEL || 'claude',
+          hasAnthropic: !!req.user.aiConfig?.anthropicKey || !!process.env.ANTHROPIC_API_KEY,
+          hasOpenAi: !!req.user.aiConfig?.openAiKey || !!process.env.OPENAI_API_KEY,
+          hasGemini: !!req.user.aiConfig?.geminiKey || !!process.env.GEMINI_API_KEY,
+        }
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// PUT /api/auth/ai-config (update API keys securely)
+// ────────────────────────────────────────────────────────────────────────────
+const { encrypt } = require('../utils/encryption');
+
+router.put('/ai-config', protect, async (req, res, next) => {
+  try {
+    const { defaultModel, anthropicKey, openAiKey, geminiKey } = req.body;
+    
+    if (!req.user.aiConfig) {
+      req.user.aiConfig = {};
+    }
+
+    if (defaultModel) req.user.aiConfig.defaultModel = defaultModel;
+    
+    // Encrypt before saving, but only if they actually sent a new key
+    if (anthropicKey !== undefined && anthropicKey !== 'unchanged') {
+      req.user.aiConfig.anthropicKey = encrypt(anthropicKey);
+    }
+    if (openAiKey !== undefined && openAiKey !== 'unchanged') {
+      req.user.aiConfig.openAiKey = encrypt(openAiKey);
+    }
+    if (geminiKey !== undefined && geminiKey !== 'unchanged') {
+      req.user.aiConfig.geminiKey = encrypt(geminiKey);
+    }
+
+    await req.user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'AI Configuration updated securely',
+      aiConfig: {
+        defaultModel: req.user.aiConfig.defaultModel || process.env.DEFAULT_AI_MODEL || 'claude',
+        hasAnthropic: !!req.user.aiConfig.anthropicKey || !!process.env.ANTHROPIC_API_KEY,
+        hasOpenAi: !!req.user.aiConfig.openAiKey || !!process.env.OPENAI_API_KEY,
+        hasGemini: !!req.user.aiConfig.geminiKey || !!process.env.GEMINI_API_KEY,
+      }
     });
   } catch (err) {
     next(err);

@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RiCheckLine, RiCloseLine, RiTimeLine, RiLoader4Line } from 'react-icons/ri';
 import { updateTask } from '../../api/tasks';
+import { createNote } from '../../api/notes';
 import { getCat } from '../../constants/dayView';
+import { useNavigate } from 'react-router-dom';
 
 const STATUS_ACTIONS = [
   {
@@ -27,6 +29,7 @@ const STATUS_ACTIONS = [
 
 export default function TaskEditPopover({ task, onClose, onUpdate }) {
   const [updating, setUpdating] = useState(false);
+  const navigate = useNavigate();
   const cat = getCat(task.category);
 
   const handleStatus = async (newStatus) => {
@@ -39,6 +42,17 @@ export default function TaskEditPopover({ task, onClose, onUpdate }) {
     } catch (err) {
       console.error('Failed to update task', err);
       setUpdating(false);
+    }
+  };
+
+  const handleAddNote = async () => {
+    try {
+      const res = await createNote({ title: task.title, category: task.category });
+      if (res.success) {
+        navigate(`/notes?id=${res.note._id}`);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -87,6 +101,13 @@ export default function TaskEditPopover({ task, onClose, onUpdate }) {
             </button>
           ))}
         </div>
+        
+        <button
+          onClick={handleAddNote}
+          className="mt-4 w-full py-2.5 rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
+        >
+          📄 Add Note
+        </button>
         
         <button
           onClick={onClose}

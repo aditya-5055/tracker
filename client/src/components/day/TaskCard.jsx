@@ -6,6 +6,8 @@ import {
 } from 'react-icons/ri';
 import { getCat, STATUS_META } from '../../constants/dayView';
 import { updateTask, deleteTask } from '../../api/tasks';
+import { createNote } from '../../api/notes';
+import { useNavigate } from 'react-router-dom';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const isPastDue = (task, selectedDate, today, now) => {
@@ -67,6 +69,7 @@ export default function TaskCard({
   const [deleting, setDeleting] = useState(false);
   const [moveErr,  setMoveErr]  = useState('');
   const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
 
   const cat      = getCat(task.category);
   const statusM  = STATUS_META[task.status];
@@ -110,6 +113,19 @@ export default function TaskCard({
       onDeleted(task._id);
     } catch {
       setDeleting(false);
+    }
+  };
+
+  // ── Add Note ───────────────────────────────────────────────────────────────
+  const handleAddNote = async (e) => {
+    e.stopPropagation();
+    try {
+      const res = await createNote({ title: task.title, category: task.category });
+      if (res.success) {
+        navigate(`/notes?id=${res.note._id}`);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -312,7 +328,13 @@ export default function TaskCard({
               </div>
             )}
 
-            <div className="flex justify-end pt-1">
+            <div className="flex justify-between items-center pt-1 mt-2 border-t border-border-subtle/50">
+              <button
+                onClick={handleAddNote}
+                className="flex items-center gap-1 text-[10px] text-accent hover:text-accent-hover transition-colors duration-150 font-medium"
+              >
+                📄 Add Note
+              </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}

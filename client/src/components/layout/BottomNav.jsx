@@ -5,6 +5,7 @@ import {
   RiCalendarEventLine,
   RiCalendarLine,
   RiSettings4Line,
+  RiFileTextLine,
 } from 'react-icons/ri';
 import { getLocalISODate } from '../../utils/dateUtils';
 
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/week',            label: 'Week',     icon: RiCalendar2Line },
   { to: `/day/${todayStr}`, label: 'Day',      icon: RiCalendarEventLine },
   { to: '/calendar',        label: 'Calendar', icon: RiCalendarLine },
+  { to: '/notes',           label: 'Notes',    icon: RiFileTextLine },
   { to: '/settings',        label: 'Settings', icon: RiSettings4Line },
 ];
 

@@ -11,6 +11,7 @@ import {
   RiLogoutBoxLine,
   RiCheckboxCircleLine,
   RiSettings4Line,
+  RiFileTextLine,
 } from 'react-icons/ri';
 
 const NAV_LINKS = [
@@ -20,6 +21,8 @@ const NAV_LINKS = [
   { to: '/day/today',    label: 'Day View',     icon: RiCalendarEventLine },
   { to: '/analytics',    label: 'Analytics',    icon: RiBarChartBoxLine },
   { to: '/motivation',   label: 'Motivation',   icon: RiLightbulbFlashLine },
+  { to: '/notes',        label: 'Notes',        icon: RiFileTextLine },
+  { to: '/notes/overview', label: 'Overview',   icon: RiFileTextLine },
   { to: '/settings',     label: 'Settings',     icon: RiSettings4Line },
 ];
 

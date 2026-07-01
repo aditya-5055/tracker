@@ -29,6 +29,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxlength: [300, 'Goal cannot exceed 300 characters'],
     },
+    aiConfig: {
+      defaultModel: {
+        type: String,
+        enum: ['claude', 'chatgpt', 'gemini'],
+        default: 'claude'
+      },
+      anthropicKey: { type: String, default: '' },
+      openAiKey: { type: String, default: '' },
+      geminiKey: { type: String, default: '' }
+    }
   },
   {
     timestamps: true,

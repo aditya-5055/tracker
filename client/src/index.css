@@ -65,9 +65,20 @@ body {
   background: var(--color-bg-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-md);
-  border-radius: 3px;
+  background-color: var(--color-border-md);
+  border-radius: 9999px;
+  border: 2px solid var(--color-bg-surface);
 }
+
+/* Hide scrollbar for no-scrollbar class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent-muted);
 }
@@ -151,4 +162,211 @@ body {
   .sidebar-link.active {
     @apply bg-accent/10 text-accent border border-accent/20;
   }
+}
+
+/* ─── TipTap Editor Styles ───────────────────────────────────────────────── */
+.tiptap {
+  outline: none;
+}
+.tiptap > * + * {
+  margin-top: 0.75em;
+}
+.tiptap p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+.tiptap h1, .tiptap h2, .tiptap h3 {
+  line-height: 1.3;
+  color: var(--color-txt-primary);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.tiptap h1 { font-size: 2rem; }
+.tiptap h2 { font-size: 1.5rem; }
+.tiptap h3 { font-size: 1.25rem; }
+.tiptap ul, .tiptap ol {
+  padding: 0 1rem;
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+.tiptap ul { list-style-type: disc; }
+.tiptap ol { list-style-type: decimal; }
+.tiptap li p { margin-top: 0.25em; margin-bottom: 0.25em; }
+
+/* ── TipTap Collapsible Sections (Details) ────────────────────────── */
+.ProseMirror details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-bg-elevated);
+  border-radius: 4px;
+}
+
+.ProseMirror details summary {
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none; /* Hide default triangle */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ProseMirror details summary::before {
+  content: "▶";
+  font-size: 0.8rem;
+  color: var(--color-txt-muted);
+  transition: transform 0.2s ease;
+}
+
+.ProseMirror details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.ProseMirror details[data-type="details"] > div[data-type="detailsContent"] {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-border-md);
+  color: var(--color-txt-secondary);
+}
+
+/* Nested nesting colors */
+.ProseMirror details details {
+  border-left-color: var(--color-accent-hover);
+  background: var(--color-bg-card);
+}
+
+.ProseMirror details details details {
+  border-left-color: var(--color-accent-teal);
+  background: var(--color-bg-base);
+}
+
+/* ── Headings Anchor Links (via ::before pseudo-element) ───────────── */
+.ProseMirror h1[data-anchor],
+.ProseMirror h2[data-anchor],
+.ProseMirror h3[data-anchor] {
+  position: relative;
+  cursor: pointer;
+}
+
+.ProseMirror h1[data-anchor]::before,
+.ProseMirror h2[data-anchor]::before,
+.ProseMirror h3[data-anchor]::before {
+  content: '🔗';
+  position: absolute;
+  left: -28px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  font-size: 0.85rem;
+  transition: opacity 0.2s ease;
+  user-select: none;
+}
+
+.ProseMirror h1[data-anchor]:hover::before,
+.ProseMirror h2[data-anchor]:hover::before,
+.ProseMirror h3[data-anchor]:hover::before {
+  opacity: 1;
+}
+
+
+.tiptap blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  color: var(--color-txt-secondary);
+  background-color: var(--color-bg-elevated);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0 8px 8px 0;
+}
+.tiptap a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+  margin: 2rem 0;
+}
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.tiptap code {
+  background-color: var(--color-bg-elevated);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: monospace;
+}
+.tiptap pre {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-txt-primary);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--color-border-subtle);
+}
+.tiptap pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.9em;
+}
+.tiptap table {
+  border-collapse: collapse;
+  margin: 0;
+  overflow: hidden;
+  table-layout: fixed;
+  width: 100%;
+}
+.tiptap table td, .tiptap table th {
+  border: 1px solid var(--color-border-strong);
+  box-sizing: border-box;
+  min-width: 1em;
+  padding: 6px 12px;
+  position: relative;
+  vertical-align: top;
+}
+.tiptap table th {
+  background-color: var(--color-bg-elevated);
+  font-weight: bold;
+  text-align: left;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--color-txt-muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.tiptap mark {
+  border-radius: 2px;
+  padding: 1px 3px;
+}
+
+/* ── Reading Mode Typography ─────────────────────────────────────────── */
+.reading-mode .ProseMirror {
+  font-size: 1.125rem;
+  line-height: 1.9;
+  pointer-events: none; /* non-editable feel */
+}
+
+.reading-mode .ProseMirror h1 { font-size: 2.25rem; }
+.reading-mode .ProseMirror h2 { font-size: 1.75rem; }
+.reading-mode .ProseMirror h3 { font-size: 1.4rem; }
+.reading-mode .ProseMirror p  { margin-bottom: 1.25rem; }
+
+/* ── Full Screen Page shadow effect ─────────────────────────────────── */
+.fullscreen-page {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 60px rgba(0,0,0,0.5);
 }

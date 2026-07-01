@@ -15,6 +15,8 @@ import WeekView       from './pages/WeekView';
 import Analytics      from './pages/Analytics';
 import Motivation     from './pages/Motivation';
 import Settings       from './pages/Settings';
+import NotesView      from './pages/NotesView';
+import NotesOverview  from './pages/NotesOverview';
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
             <Route path="/analytics"     element={<Analytics />} />
             <Route path="/motivation"    element={<Motivation />} />
             <Route path="/settings"      element={<Settings />} />
+            <Route path="/notes"         element={<NotesView />} />
+            <Route path="/notes/overview" element={<NotesOverview />} />
           </Route>
 
           {/* ── Default redirect ───────────────────────────────────── */}

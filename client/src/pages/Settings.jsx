@@ -7,6 +7,8 @@ import {
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 
+import api from '../api';
+
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express      = require('express');
+const path         = require('path');
 const cors         = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB    = require('./config/db');
@@ -9,6 +10,8 @@ const errorHandler = require('./middleware/errorHandler');
 const healthRouter = require('./routes/health');
 const authRouter   = require('./routes/auth');
 const tasksRouter  = require('./routes/tasks');
+const notesRouter  = require('./routes/notes');
+const aiRouter     = require('./routes/ai');
 
 // ─── App Init ─────────────────────────────────────────────────────────────────
 const app  = express();
@@ -28,10 +31,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());        // parses req.cookies for the protect middleware
 
+// ─── Static files ─────────────────────────────────────────────────────────────
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/health', healthRouter);
 app.use('/api/auth',   authRouter);
 app.use('/api/tasks',  tasksRouter);
+app.use('/api/notes',  notesRouter);
+app.use('/api/ai',     aiRouter);
 
 // ─── 404 fallback for unmatched /api/* routes ─────────────────────────────────
 app.use('/api/*', (req, res) => {
@@ -46,5 +54,6 @@ app.listen(PORT, () => {
   console.log(`🚀  Server  →  http://localhost:${PORT}`);
   console.log(`🔑  Auth    →  http://localhost:${PORT}/api/auth`);
   console.log(`📋  Tasks   →  http://localhost:${PORT}/api/tasks`);
+  console.log(`📝  Notes   →  http://localhost:${PORT}/api/notes`);
   console.log(`💚  Health  →  http://localhost:${PORT}/api/health`);
 });

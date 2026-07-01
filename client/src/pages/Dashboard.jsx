@@ -8,6 +8,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { fetchDashboardStats } from '../api/tasks';
+import { fetchNotes } from '../api/notes';
 import { CATEGORIES } from '../constants/dayView';
 import ProgressRing from '../components/day/ProgressRing';
 import { getLocalISODate } from '../utils/dateUtils';
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
+  const [recentNotes, setRecentNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -32,8 +34,12 @@ export default function Dashboard() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetchDashboardStats();
-      setStats(res.data);
+      const [statsRes, notesRes] = await Promise.all([
+        fetchDashboardStats(),
+        fetchNotes({ sort: 'newest', limit: 3 })
+      ]);
+      setStats(statsRes.data);
+      if (notesRes.success) setRecentNotes(notesRes.notes);
     } catch {
       setError('Failed to load dashboard data.');
     } finally {
@@ -79,6 +85,15 @@ export default function Dashboard() {
     const catMeta = CATEGORIES.find(cat => cat.id === c.category) || CATEGORIES[CATEGORIES.length - 1];
     return { ...c, color: catMeta.color, label: catMeta.label };
   }) || [];
+
+  const formatTimeAgo = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const diff = Math.floor((new Date() - date) / 1000);
+    if (diff < 3600) return `${Math.floor(diff / 60) || 1}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
 
   return (
     <motion.div variants={container} initial="hidden" animate="visible" className="space-y-6 pb-12">
@@ -271,6 +286,56 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+        </motion.div>
+
+        {/* ── Recent Notes ───────────────────────────────────────────────────── */}
+        <motion.div variants={item} className="card lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-bold text-txt-primary">Recent Notes</h3>
+              <p className="text-xs text-txt-muted">Last edited documents</p>
+            </div>
+            <button
+              onClick={() => navigate('/notes?new=true')}
+              className="text-xs flex items-center gap-1 bg-accent/10 hover:bg-accent/20 text-accent px-3 py-1.5 rounded-lg transition-colors"
+            >
+              <RiAddLine /> New
+            </button>
+          </div>
+          
+          <div className="space-y-2 mb-4">
+            {loading ? (
+              [1, 2, 3].map(i => <div key={i} className="h-12 bg-bg-elevated rounded-xl animate-pulse" />)
+            ) : recentNotes.length > 0 ? (
+              recentNotes.map(note => (
+                <Link to={`/notes?id=${note._id}`} key={note._id} className="flex items-center justify-between p-3 bg-bg-elevated hover:bg-bg-elevated-hover rounded-xl transition-colors border border-border-subtle hover:border-border-strong group">
+                  <div className="flex items-center gap-3 truncate">
+                    <div className="w-8 h-8 rounded-lg bg-bg-surface flex items-center justify-center text-txt-secondary border border-border-subtle group-hover:text-accent transition-colors">
+                      📄
+                    </div>
+                    <div className="truncate">
+                      <p className="text-sm font-semibold text-txt-primary truncate">{note.title || 'Untitled'}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-bold text-txt-muted uppercase tracking-wider">{note.category}</span>
+                        <span className="text-[10px] text-txt-muted">• {formatTimeAgo(note.lastEditedAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-txt-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="text-center py-6 text-sm text-txt-muted bg-bg-elevated/50 rounded-xl border border-border-subtle">
+                No recent notes. Start writing!
+              </div>
+            )}
+          </div>
+          
+          <Link to="/notes" className="text-xs text-accent hover:text-accent-hover font-medium block text-center transition-colors">
+            View all notes →
+          </Link>
         </motion.div>
 
         {/* ── Mini Previews ──────────────────────────────────────────────────── */}
