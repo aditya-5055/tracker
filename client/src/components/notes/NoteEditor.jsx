@@ -442,7 +442,6 @@ export default function NoteEditor({ note, onUpdate, onExport, onBack }) {
           userAiConfig={user?.aiConfig}
           onInsertHtml={() => {
             toast.success('Inserted into note');
-            debouncedSave({ content: editor.getHTML(), tabs }); // Ensure auto-save fires
           }}
         />
 
